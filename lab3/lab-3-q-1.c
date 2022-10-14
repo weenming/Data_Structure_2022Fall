@@ -88,13 +88,37 @@ void testHasEmptyHead() {
     Node* head = (Node*)malloc(sizeof(Node));
     head->data = -1;
     head->next = NULL;
-    head = insertToBeginHasEmptyHead(head, 1);
+    // test case 0
+
+    // test case 1
+    // head = insertToBeginHasEmptyHead(head, 1);
+    // head = insertToBeginHasEmptyHead(head, 2);
+    // head = insertToBeginHasEmptyHead(head, 3);
+    // head = insertToEndHasEmptyHead(head, 10);
+    // head = insertToEndHasEmptyHead(head, 20);
+    // head = insertToEndHasEmptyHead(head, 30);
+
+    // test case 2
+    //  head = insertToBeginHasEmptyHead(head, 100);
+    //  head = insertToBeginHasEmptyHead(head, 200);
+
+    // test case 3
+    // head = insertToBeginHasEmptyHead(head, 100);
+
+    // test case 4
+    // head = insertToEndHasEmptyHead(head, 10);
+    // head = insertToEndHasEmptyHead(head, 20);
+
+    // test case 5
+    // head = insertToEndHasEmptyHead(head, 20);
+
+    // test case 6
+    head = insertToBeginHasEmptyHead(head, 100);
+    head = insertToEndHasEmptyHead(head, 20);
     head = insertToBeginHasEmptyHead(head, 2);
     head = insertToBeginHasEmptyHead(head, 3);
-
     head = insertToEndHasEmptyHead(head, 10);
     head = insertToEndHasEmptyHead(head, 20);
-    head = insertToEndHasEmptyHead(head, 30);
 
     printListHasEmptyHead(head);
     destoryListHasEmptyHead(head);
@@ -107,13 +131,37 @@ void testHasEmptyHead() {
 void testNotEmptyHead() {
     // your test case
     Node* head = NULL;
-    head = insertToBeginNotEmptyHead(head, 1);
+    // test case 0
+
+    // test case 1
+    // head = insertToBeginNotEmptyHead(head, 1);
+    // head = insertToBeginNotEmptyHead(head, 2);
+    // head = insertToBeginNotEmptyHead(head, 3);
+    // head = insertToEndNotEmptyHead(head, 10);
+    // head = insertToEndNotEmptyHead(head, 20);
+    // head = insertToEndNotEmptyHead(head, 30);
+
+    // test case 2
+    // head = insertToBeginNotEmptyHead(head, 100);
+    // head = insertToBeginNotEmptyHead(head, 200);
+
+    // test case 3
+    // head = insertToBeginNotEmptyHead(head, 100);
+
+    // test case 4
+    // head = insertToEndNotEmptyHead(head, 10);
+    // head = insertToEndNotEmptyHead(head, 20);
+
+    // test case 5
+    // head = insertToEndNotEmptyHead(head, 20);
+
+    // test case 6
+    head = insertToBeginNotEmptyHead(head, 100);
+    head = insertToEndNotEmptyHead(head, 20);
     head = insertToBeginNotEmptyHead(head, 2);
     head = insertToBeginNotEmptyHead(head, 3);
-
     head = insertToEndNotEmptyHead(head, 10);
     head = insertToEndNotEmptyHead(head, 20);
-    head = insertToEndNotEmptyHead(head, 30);
 
     printListNotEmptyHead(head);
     // have not figured out how to set the input pointer to NULL...

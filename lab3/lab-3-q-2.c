@@ -40,6 +40,46 @@ void printListHasEmptyHead(Node* list);
 void printListNotEmptyHead(Node* list);
 
 void testHasEmptyHead() {
+    // test case 1
+    // Node h;
+    // h.data = -1;
+    // Node a;
+    // a.data = 1;
+    // Node b;
+    // b.data = 2;
+    // Node c;
+    // c.data = 3;
+    // h.next = &a;
+    // a.next = &b;
+    // b.next = &c;
+    // c.next = NULL;
+    // // h.next = NULL;
+    //
+    // test case 2
+    // Node h;
+    // h.data = -1;
+    // Node a;
+    // a.data = 1;
+    // Node b;
+    // b.data = 2;
+    // h.next = &a;
+    // a.next = &b;
+    // b.next = NULL;
+
+    // test case 3
+    // Node h;
+    // h.data = -1;
+    // Node a;
+    // a.data = 1;
+    // h.next = &a;
+    // a.next = NULL;
+
+    // test case 4
+    // Node h;
+    // h.data = -1;
+    // h.next = NULL;
+
+    // test case 5
     Node h;
     h.data = -1;
     Node a;
@@ -48,12 +88,17 @@ void testHasEmptyHead() {
     b.data = 2;
     Node c;
     c.data = 3;
+    Node d;
+    d.data = 4;
+    Node e;
+    e.data = 5;
     h.next = &a;
     a.next = &b;
     b.next = &c;
-    c.next = NULL;
-    // h.next = NULL;
-    // a.next = NULL;
+    c.next = &d;
+    d.next = &e;
+    e.next = NULL;
+
     Node* list = &h;
 
     printListHasEmptyHead(list);
@@ -61,6 +106,7 @@ void testHasEmptyHead() {
     printListHasEmptyHead(list);
 }
 void testNotEmptyHead() {
+    // test case 1
     Node a;
     a.data = 1;
     Node b;
@@ -70,9 +116,43 @@ void testNotEmptyHead() {
     a.next = &b;
     b.next = &c;
     c.next = NULL;
+
+    //
+    // test case 2
+    // Node a;
+    // a.data = 1;
+    // Node b;
+    // b.data = 2;
+    // a.next = &b;
+    // b.next = NULL;
+
+    // test case 3
+    // Node a;
+    // a.data = 1;
     // a.next = NULL;
 
+    // test case 4
+    // uncomment line 156 in this test case
+
+    // test case 5
+    // Node a;
+    // a.data = 1;
+    // Node b;
+    // b.data = 2;
+    // Node c;
+    // c.data = 3;
+    // Node d;
+    // d.data = 4;
+    // Node e;
+    // e.data = 5;
+    // a.next = &b;
+    // b.next = &c;
+    // c.next = &d;
+    // d.next = &e;
+    // e.next = NULL;
+
     Node* list = &a;
+    // in test case 4, uncomment the line below
     // list = NULL;
     printListNotEmptyHead(list);
     list = reverseListNotEmptyHead(list);
