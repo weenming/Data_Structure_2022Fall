@@ -53,19 +53,19 @@ void test() {
     // Node h2 = {2, &h3};
     // Node h1 = {1, &h2};
 
-    Node h1 = {1, NULL};
+    // Node h1 = {1, NULL};
 
     // Node h1 = NULL;
 
-    // Node h9 = {9, NULL};
-    // Node h8 = {8, &h9};
-    // Node h7 = {7, &h8};
-    // Node h6 = {6, &h7};
-    // Node h5 = {5, &h6};
-    // Node h4 = {4, &h5};
-    // Node h3 = {3, &h4};
-    // Node h2 = {2, &h3};
-    // Node h1 = {1, &h2};
+    Node h9 = {9, NULL};
+    Node h8 = {8, &h9};
+    Node h7 = {7, &h8};
+    Node h6 = {6, &h7};
+    Node h5 = {5, &h6};
+    Node h4 = {4, &h5};
+    Node h3 = {3, &h4};
+    Node h2 = {2, &h3};
+    Node h1 = {1, &h2};
 
     Node* res = mySolution(&h1);
     while (res != NULL) {

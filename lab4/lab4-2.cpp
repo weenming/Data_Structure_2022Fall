@@ -45,9 +45,11 @@ int find_substr(string str, string p) {
 
 int mySolution(string a, string b) {
     /*
-        Time complexity: only need to do KMP once and therefore is O(a.size() +
-       b.size()) Space complexity: c takes up max(a.size(), b.size()) space. KMP
-       takes extra b.size(). So total space complexity is O(a.size(), b.size()).
+    Time complexity: only need to do KMP once and therefore is O(a.size()
+    +b.size())
+
+    Space complexity: c takes up max(a.size(), b.size()) space.
+    KMPtakes extra b.size(). So total space complexity is O(a.size(), b.size()).
     */
     // find the shortest repetitive string of a s.t. b is a substring of it
     int n = b.size() / a.size() + 1 - !(b.size() - a.size());
