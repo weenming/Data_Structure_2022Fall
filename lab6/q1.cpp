@@ -6,6 +6,31 @@ using namespace std;
 #define MINPOS 4.94065645841246544E-324
 #define MAXNEG -4.94065645841246544E-324
 
+double myPowaaa(double x, int n) {
+    // TIme complexity: O(N)
+    // Space complexity: O(1)
+    double res = 1.;
+    if (n == 0) {
+        if (x == 0) {
+            double myInf = 1e300 * 1e300;
+            cout << "0 ^ 0 is undefined!" << endl;
+            return myInf * 0;
+        } else {
+            return 1;
+        }
+    } else if (n > 0) {
+        for (int i = 0; i < n; i++) {
+            res *= x;
+        }
+        return res;
+    } else if (n < 0) {
+        for (int i = 0; i > n; i--) {
+            res /= x;
+        }
+        return res;
+    }
+}
+
 double myPow(double x, int n) {
     // Time complexity: O(N)
     // Space complexity: O(N)
@@ -21,7 +46,7 @@ double myPow(double x, int n) {
     }
     // 0 ^ n = 0
     if (x == 0) {
-        return 1;
+        return 0;
     }
 
     // exits of recursion:
@@ -40,9 +65,9 @@ double myPow(double x, int n) {
         // when initial n > 1
         // when overflow, throw error
         f = x * myPow(x, n - 1);
-        // detect overflow: I think my compiler optimizes this overflow to inf
-        // if I do not declare `double myInf` explicitly, so this may not
-        // function properly in other environments.
+        // detect overflow: I think my compiler optimizes this overflow to
+        // inf if I do not declare `double myInf` explicitly, so this may
+        // not function properly in other environments.
         double myInf = 1e300 * 1e300;
         if (f == myInf || f == -myInf) {
             cout << "overflow!" << endl;
