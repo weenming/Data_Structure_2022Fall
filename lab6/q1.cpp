@@ -6,7 +6,7 @@ using namespace std;
 #define MINPOS 4.94065645841246544E-324
 #define MAXNEG -4.94065645841246544E-324
 
-double myPowaaa(double x, int n) {
+double myPow(double x, int n) {
     // TIme complexity: O(N)
     // Space complexity: O(1)
     double res = 1.;
@@ -31,7 +31,7 @@ double myPowaaa(double x, int n) {
     }
 }
 
-double myPow(double x, int n) {
+double myPowaa(double x, int n) {
     // Time complexity: O(N)
     // Space complexity: O(N)
     // when n is zero, $x^n \def 0$
