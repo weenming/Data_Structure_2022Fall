@@ -54,7 +54,7 @@ vector<vector<int>> mySolution(TreeNode* root) {
             // Now node is at the next layer
             // maintain `last layer node` to indicate layer in the tree
             // copy of layer_vec
-            tree_stack.push(layer_vec);
+            tree_vec.insert(tree_vec.begin(), layer_vec);
             layer_vec.clear();
             layer_vec.resize(0);
             // if this node (the leftest of the current layer is not NULL, set
@@ -70,12 +70,13 @@ vector<vector<int>> mySolution(TreeNode* root) {
         layer_vec.push_back(node->value);
     }
     // break if queue is empty, so last layer is not saved
-    tree_stack.push(layer_vec);
+    // Use vector insert instead of stack...
+    tree_vec.insert(tree_vec.begin(), layer_vec);
 
-    // transfer to vector
-    while (!tree_stack.is_empty()) {
-        tree_vec.push_back(tree_stack.pop());
-    }
+    // // transfer to vector
+    // while (!tree_stack.is_empty()) {
+    //     tree_vec.push_back(tree_stack.pop());
+    // }
     return tree_vec;
 }
 
@@ -104,11 +105,11 @@ void print_vector2(vector<vector<int>> res) {
 }
 
 void test() {
-    // TreeNode* Node_1 = new TreeNode(1);
-    // TreeNode* Node_3 = new TreeNode(3);
-    // TreeNode* Node_4 = new TreeNode(4);
-    // TreeNode* Node_2 = new TreeNode(2, Node_3, Node_4);
-    // TreeNode* root = new TreeNode(0, Node_1, Node_2);
+    TreeNode* Node_1 = new TreeNode(1);
+    TreeNode* Node_3 = new TreeNode(3);
+    TreeNode* Node_4 = new TreeNode(4);
+    TreeNode* Node_2 = new TreeNode(2, Node_3, Node_4);
+    TreeNode* root = new TreeNode(0, Node_1, Node_2);
 
     // TreeNode* Node_5 = new TreeNode(5);
     // TreeNode* Node_6 = new TreeNode(6);
@@ -124,17 +125,17 @@ void test() {
     // TreeNode* Node_1 = new TreeNode(1, Node_5, Node_6);
     // TreeNode* root = new TreeNode(0, Node_1, Node_2);
 
-    TreeNode* Node_9 = new TreeNode(9);
-    TreeNode* Node_10 = new TreeNode(10);
-    TreeNode* Node_7 = new TreeNode(7);
-    TreeNode* Node_8 = new TreeNode(8);
-    TreeNode* Node_5 = new TreeNode(5);
-    TreeNode* Node_6 = new TreeNode(6);
-    TreeNode* Node_3 = new TreeNode(3, Node_7, Node_8);
-    TreeNode* Node_4 = new TreeNode(4, Node_9, Node_10);
-    TreeNode* Node_2 = new TreeNode(2, Node_5, Node_6);
-    TreeNode* Node_1 = new TreeNode(1, Node_3, Node_4);
-    TreeNode* root = new TreeNode(0, Node_1, Node_2);
+    // TreeNode* Node_9 = new TreeNode(9);
+    // TreeNode* Node_10 = new TreeNode(10);
+    // TreeNode* Node_7 = new TreeNode(7);
+    // TreeNode* Node_8 = new TreeNode(8);
+    // TreeNode* Node_5 = new TreeNode(5);
+    // TreeNode* Node_6 = new TreeNode(6);
+    // TreeNode* Node_3 = new TreeNode(3, Node_7, Node_8);
+    // TreeNode* Node_4 = new TreeNode(4, Node_9, Node_10);
+    // TreeNode* Node_2 = new TreeNode(2, Node_5, Node_6);
+    // TreeNode* Node_1 = new TreeNode(1, Node_3, Node_4);
+    // TreeNode* root = new TreeNode(0, Node_1, Node_2);
 
     // TreeNode* Node_2 = new TreeNode(2);
     // TreeNode* Node_1 = new TreeNode(1);
