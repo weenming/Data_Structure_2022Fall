@@ -13,6 +13,11 @@ int Solution(vector<int> &nums) {
     // of O(nlogn)
     // Space complexity is O(n)
 
+    if (nums.size() <= 1) {
+        cout << "invalid nums" << endl;
+        return 0;
+    }
+
     MyHeap<int> heap(nums);
     int res, n = nums.size(), i = 1;
     // smallest, multiply by (n-1), and so does the second smallest
@@ -27,10 +32,17 @@ int Solution(vector<int> &nums) {
 }
 
 void test1() {
-    vector<int> nums;
-    nums.push_back(2);
-    nums.push_back(4);
-    nums.push_back(3);
+    // vector<int> nums;
+    // nums.push_back(2);
+    // nums.push_back(4);
+    // nums.push_back(3);
+
+    vector<int> nums = {1, 2, 3, 4, 5};
+
+    // vector<int> nums = {1, 2};
+
+    // vector<int> nums = {1};
+
     cout << Solution(nums) << endl;
     return;
 }
