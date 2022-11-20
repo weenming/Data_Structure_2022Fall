@@ -9,6 +9,8 @@ using namespace std;
 #define MAX_DISCOUNT_1 10
 // 最大的不同优先级的折扣数量
 #define MAX_DISCOUNT_2 10
+// 购物车中最大的商品数
+#define MAX_ITEM_NUMBER 100
 
 // 整个商城中正在进行的活动
 
@@ -26,6 +28,6 @@ vector<string> MSG_2_2 = {"满减2-a", "满减2-b", "满减2-c"};
 vector<string> MSG_2_3 = {"满减3-a", "满减3-b", "满减3-c"};
 vector<vector<string>> MSG_2 = {MSG_2_1, MSG_2_2, MSG_2_3};
 
-#define MAX_ITEM_NUMBER 100
+vector<string> SHOP_NAME = {"商店Alpha", "商店Beta", "商店Gamma", "商店Delta"};
 
 #endif

@@ -2,6 +2,7 @@
 #define TREE_H_
 
 #include <cassert>
+#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -45,7 +46,7 @@ class CartTree {
    protected:
     TreeNode* root_;
     int __SubTreePriority(TreeNode*, Item*, TreeNode*);
-    void __ShowCartRecur(TreeNode*);
+    double __ShowCartRecur(TreeNode*);
     void __DelTree(TreeNode*);
     TreeNode* __AddItem(Item* item, bool update);
     TreeNode* __AddMidNode(TreeNode*, Item*);
@@ -54,7 +55,8 @@ class CartTree {
     TreeNode* __FindLeaf(int shop_id, int item_id, TreeNode* root);
     TreeNode* __DelBadNodes(TreeNode*);
     TreeNode* __DelEmptyNodes(TreeNode*);
-    void __UpdateMidNodes(int, TreeNode*);
+    void __UpdateMidNodesDel(int, TreeNode*);
+    void __UpdateMidNodesAdd(TreeNode*);
     bool __SamePriority(TreeNode*, Item*);
     int last_time_;
     int item_count_;
@@ -72,7 +74,9 @@ class CartTree {
     void DelItem(string name);
     void ShowCart() {
         cout << "Showing Shopping cart:\n" << endl;
-        __ShowCartRecur(root_);
+        cout << "Total price: " << fixed << setprecision(2)
+             << __ShowCartRecur(root_) << endl
+             << endl;
     };
     void ShowTreePretty(TreeNode*, string);
 };
@@ -82,11 +86,26 @@ void CartTree::ShowTreePretty(TreeNode* cur, string indent) {
         return;
     }
     if (cur->data != -1) {
-        cout << indent << "|- Node: data = " << cur->data << endl;
+        cout << indent << "|- Node: data = " << cur->data;
+        if (cur->data < MAX_DISCOUNT_1) {
+            cout << " (跨店折扣" << cur->data + 1 << "-"
+                 << char('a' - 1 + cur->item->discount_1[cur->data]) << ")"
+                 << endl;
+        } else if (cur->data == MAX_DISCOUNT_1) {
+            cout << " (同商店" << cur->item->shop_id << ")" << endl;
+        } else {
+            cout << " (跨店满减" << cur->data - MAX_DISCOUNT_1 << "-"
+                 << char('a' - 1 +
+                         cur->item->discount_2[cur->data - MAX_DISCOUNT_1 - 1])
+                 << ")" << endl;
+        }
     } else if (cur->item != nullptr) {
         // leaf
-        cout << indent << "|- Leaf " << endl;
+        cout << indent << "|- Leaf-"
+             << "-item number: " << cur->number
+             << " add time: " << cur->add_time << endl;
         cur->item->ShowItem(indent + "*  ");
+
     } else {
         // cur->item == nullptr: should be root
         cout << indent << "|- Root " << endl;
@@ -114,30 +133,40 @@ void CartTree::__DelTree(TreeNode* node) {
     return;
 }
 
-void CartTree::__ShowCartRecur(TreeNode* cur) {
-    // 为啥debug的时候，这里没有加一行cout的话就不会报exception
-    if (cur == nullptr) return;
+double CartTree::__ShowCartRecur(TreeNode* cur) {
+    if (cur == nullptr) return 0;
 
     // cout << cur << endl;
     if (cur->son != nullptr) {
-        __ShowCartRecur(cur->son);
+        return __ShowCartRecur(cur->son) + __ShowCartRecur(cur->sibling);
+    } else if (cur != root_) {
+        cur->item->ShowItemForCart();
+        cout << "      - " << cur->number << " pcs in your shopping cart"
+             << endl;
+        cout << "      - "
+             << "   add time: " << cur->add_time << endl;
+        cout << "   price: " << fixed << setprecision(2) << cur->item->price
+             << " * " << cur->number << endl
+             << endl;
+        return cur->item->price * cur->number + __ShowCartRecur(cur->sibling);
     } else {
-        cur->item->ShowItem();
-        cout << "item number: " << cur->number << endl << endl;
+        return 0;
     }
-    __ShowCartRecur(cur->sibling);
 }
 
 void CartTree::AddItem(Item* item) {
-    // 更新加入时间
-    last_time_ += 1;
-    if (item_count_ < MAX_ITEM_NUMBER)
+    cout << "Adding item: id " << item->item_id << " ..." << endl;
+    if (item_count_ < MAX_ITEM_NUMBER) {
+        // 更新加入时间和购物车内商品数量
+        last_time_ += 1;
         item_count_ += 1;
-    else
-        cout << "shopping cart is full!" << endl;
-    __AddItem(item, true);
-    cout << "Add item success" << endl;
-    return;
+        __AddItem(item, true);
+        cout << "Add item success" << endl << endl;
+        return;
+    } else {
+        cout << "Fail: shopping cart is full!" << endl << endl;
+        return;
+    }
 }
 TreeNode* CartTree::__AddItem(Item* item, bool update) {
     /*
@@ -465,15 +494,30 @@ TreeNode* CartTree::__AddMidNode(TreeNode* root, Item* item) {
     cur_parent->son = first_mid_node;
     // 加完了
     // 需要删掉独支(一个或多个只有一个孩子的中间节点)
-    __DelBadNodes(original_sibling);
-    // 保证新增节点之后顺序是对的
-    // 现在应该不用了，因为之前让新子树跑到上面的情况里，访问的时候不更新中间节点位置
-    // // 更新中间节点指的item，让item是下面最新的一个
-    // int add_time = root->add_time;
-    // __UpdateMidNodes(add_time, original_sibling);
-    // // 对original_sibling 的祖先中间节点按照->item的加入时间进行sort
-    // __SortAncestors(original_sibling);
-    return new_node;
+    TreeNode* remain_node = __DelBadNodes(original_sibling);
+    // 这个不太efficient，因为从头开始加了
+    if (remain_node) {
+        // 如果有删独支
+
+        TreeNode* prev_node = __GetPrevSibling(remain_node);
+        if (prev_node) {
+            prev_node->sibling = remain_node->sibling;
+        } else {
+            remain_node->parent->son = remain_node->sibling;
+        }
+        // 再加回去，就按顺序了
+        int time_now = last_time_;
+        last_time_ = remain_node->add_time;
+        TreeNode* tmp_node = __AddItem(remain_node->item, false);
+        last_time_ = time_now;
+        remain_node->~TreeNode();
+        remain_node = tmp_node;
+        __UpdateMidNodesAdd(remain_node);
+
+        return tmp_node;
+    } else {
+        return new_node;
+    }
 }
 
 int CartTree::__SubTreePriority(TreeNode* root, Item* item, TreeNode* node0) {
@@ -489,7 +533,9 @@ int CartTree::__SubTreePriority(TreeNode* root, Item* item, TreeNode* node0) {
             // 跨店折扣类型相等且有折扣
             if (item->discount_1[j] == root->item->discount_1[j] &&
                 item->discount_1[j]) {
-                if (__NoAncestor(j, node0)) return j;
+                if (__NoAncestor(j, node0)) {
+                    return j;
+                }
             }
         }
         if (item->shop_id == root->item->shop_id) {
@@ -526,7 +572,7 @@ int CartTree::__SubTreePriority(TreeNode* root, Item* item, TreeNode* node0) {
     // 如果能进这个节点(root)，直接返回
     // 如果不能进这个节点(root)，只有比node对应的优先级更高的才能返回
 
-    if (__SamePriority(root, item)) {
+    if (__SamePriority(node0, item)) {
         return best_priority;
     } else if (best_priority < node0->data) {
         return best_priority;
@@ -564,12 +610,12 @@ bool CartTree::__NoAncestor(int data, TreeNode* node) {
 }
 
 TreeNode* CartTree::__DelBadNodes(TreeNode* leaf) {
-    TreeNode* cur = leaf;
+    TreeNode *cur = leaf, *last_cur = leaf;
     if (leaf && leaf->parent && !leaf->son)
         // 如果leaf是nullptr, 中间节点, 或根, 不删
         cur = leaf->parent;
     else
-        return leaf;
+        return nullptr;
     // 注意到这里如果leaf上方有独支但是leaf有多个item，也不必保留这个支
     while (cur != root_) {
         if (!cur->son->sibling) {
@@ -580,15 +626,16 @@ TreeNode* CartTree::__DelBadNodes(TreeNode* leaf) {
             cur->number = leaf->number;
             cur->son->~TreeNode();
             cur->son = nullptr;
+            last_cur = cur;
         } else
             break;
         cur = cur->parent;
     }
-    return cur->son;
+    return last_cur;
 }
 
 TreeNode* CartTree::__GetPrevSibling(TreeNode* node) {
-    assert(node->parent != nullptr);
+    assert(node && node->parent);
     TreeNode* cur = node->parent->son;
     while (cur != nullptr && cur->sibling != node) {
         cur = cur->sibling;
@@ -632,6 +679,8 @@ void CartTree::DelItem(int shop_id, int item_id) {
     if (!leaf_to_del) {
         cout << "can not find the item to remove!" << endl;
         return;
+    } else {
+        cout << "deleting item: id " << item_id << endl;
     }
     // cout << leaf_to_del->item->item_id << endl;
     // 最简单：大于1件商品
@@ -668,11 +717,9 @@ void CartTree::DelItem(int shop_id, int item_id) {
         leaf_to_del->parent->son = leaf_to_del->sibling;
     }
     // 如果就2个leaf，删掉1个还剩1个，要调整树
-    if (!leaf_to_del->parent->son->sibling) {
+    if (!leaf_to_del->parent->son->sibling && !leaf_to_del->parent->son->son) {
         remain_node = __DelBadNodes(remain_node);
         // 这个不太efficient，因为从头开始加了
-        remain_node = __AddItem(remain_node->item, false);
-
         // 从树中移除剩下的这个item
         prev_node = __GetPrevSibling(remain_node);
         if (prev_node) {
@@ -681,7 +728,10 @@ void CartTree::DelItem(int shop_id, int item_id) {
             remain_node->parent->son = remain_node->sibling;
         }
         // 再加回去，就按顺序了
+        int time_now = last_time_;
+        last_time_ = remain_node->add_time;
         tmp_node = __AddItem(remain_node->item, false);
+        last_time_ = time_now;
         remain_node->~TreeNode();
         remain_node = tmp_node;
     }
@@ -691,7 +741,9 @@ void CartTree::DelItem(int shop_id, int item_id) {
 
     // 更新remain_node的祖先节点的add_time
     // 从remain_node开始，对祖先节点逐层排序
-    __UpdateMidNodes(deleted_add_time, remain_node);
+    __UpdateMidNodesDel(deleted_add_time, remain_node->parent->son);
+    cout << "item " << item_id << " in shop " << shop_id << " deleted, "
+         << endl;
     return;
 }
 
@@ -711,11 +763,13 @@ TreeNode* CartTree::__FindLeaf(int shop_id, int item_id, TreeNode* root) {
     return nullptr;
 }
 
-void CartTree::__UpdateMidNodes(int deleted_add_time, TreeNode* remain_node) {
+void CartTree::__UpdateMidNodesDel(int deleted_add_time,
+                                   TreeNode* remain_node) {
     int remain_add_time = remain_node->add_time;
     TreeNode *cur = remain_node, *prev_sibling;
     while (cur && cur->parent) {
-        if (cur->add_time == deleted_add_time) {
+        if (cur->add_time == deleted_add_time ||
+            cur->add_time < remain_add_time) {
             cur->add_time = remain_add_time;
         }
         // 向右边比较，如果addtime比右边小就和右边交换
@@ -724,7 +778,32 @@ void CartTree::__UpdateMidNodes(int deleted_add_time, TreeNode* remain_node) {
             if (prev_sibling) {
                 prev_sibling->sibling = cur->sibling;
                 cur->sibling = cur->sibling->sibling;
-                prev_sibling->sibling = cur;
+                prev_sibling->sibling->sibling = cur;
+            } else {
+                cur->parent->son = cur->sibling;
+                cur->sibling = cur->sibling->sibling;
+                cur->parent->son->sibling = cur;
+            }
+        }
+        cur = cur->parent;
+    }
+    return;
+}
+
+void CartTree::__UpdateMidNodesAdd(TreeNode* remain_node) {
+    int remain_add_time = remain_node->add_time;
+    TreeNode *cur = remain_node, *prev_sibling;
+    while (cur && cur->parent) {
+        if (cur->add_time < remain_add_time) {
+            cur->add_time = remain_add_time;
+        }
+        // 向右边比较，如果addtime比右边小就和右边交换
+        while (cur->sibling && cur->add_time < cur->sibling->add_time) {
+            prev_sibling = __GetPrevSibling(cur);
+            if (prev_sibling) {
+                prev_sibling->sibling = cur->sibling;
+                cur->sibling = cur->sibling->sibling;
+                prev_sibling->sibling->sibling = cur;
             } else {
                 cur->parent->son = cur->sibling;
                 cur->sibling = cur->sibling->sibling;

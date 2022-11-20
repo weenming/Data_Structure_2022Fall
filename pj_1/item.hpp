@@ -10,6 +10,8 @@ using namespace std;
 
 extern vector<vector<string>> MSG_1;
 extern vector<vector<string>> MSG_2;
+extern vector<string> SHOP_NAME;
+
 struct Item {
     // one shop has one id
     int shop_id;
@@ -34,7 +36,7 @@ struct Item {
           price(p),
           discount_1{d1},
           discount_2{d2},
-          name(n){};
+          name(n) {}
     Item(int sid, int iid, double p, string n)
         : shop_id(sid),
           item_id(iid),
@@ -59,11 +61,13 @@ struct Item {
         for (int i = 1; i < MAX_DISCOUNT_2; i++) discount_2[i] = 0;
         item_id = iid;
         shop_id = sid;
+        price = 0;
     }
 
     string PrintDiscount();
     void ShowItem();
     void ShowItem(string);
+    void ShowItemForCart();
 };
 
 string Item::PrintDiscount() {
@@ -105,6 +109,23 @@ void Item::ShowItem(string indent) {
     cout << indent << "shop id: " << shop_id << endl;
 
     cout << indent << PrintDiscount() << endl;
+    return;
+}
+
+void Item::ShowItemForCart() {
+    if (!name.empty()) cout << "-- Item name: " << name << endl;
+    cout << "   Item id: " << item_id << endl;
+    // 优先打印商店名称
+    if (SHOP_NAME.size() <= shop_id)
+        cout << "   shop has no name, shop id: " << shop_id << endl;
+    else
+        cout << "   shop name: " << SHOP_NAME[shop_id] << endl;
+
+    string discount_msg = PrintDiscount();
+    if (discount_msg.empty())
+        cout << "   Sorry, no discount applicable for this item." << endl;
+    else
+        cout << "   Discount info: " << discount_msg << endl;
     return;
 }
 
