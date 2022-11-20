@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 
+#include "globals.hpp"
 #include "item.hpp"
 
 using namespace std;
@@ -46,14 +47,17 @@ class CartTree {
     int __SubTreePriority(TreeNode*, Item*, TreeNode*);
     void __ShowCartRecur(TreeNode*);
     void __DelTree(TreeNode*);
-    void __AddMidNode(TreeNode*, Item*);
+    TreeNode* __AddItem(Item* item, bool update);
+    TreeNode* __AddMidNode(TreeNode*, Item*);
     bool __NoAncestor(int, TreeNode*);
-    TreeNode* __get_prev_sibling(TreeNode*);
-    void __DelBadNodes(TreeNode*);
+    TreeNode* __GetPrevSibling(TreeNode*);
+    TreeNode* __FindLeaf(int shop_id, int item_id, TreeNode* root);
+    TreeNode* __DelBadNodes(TreeNode*);
+    TreeNode* __DelEmptyNodes(TreeNode*);
     void __UpdateMidNodes(int, TreeNode*);
-    void __SortAncestors(TreeNode*);
     bool __SamePriority(TreeNode*, Item*);
     int last_time_;
+    int item_count_;
 
    public:
     CartTree();
@@ -97,6 +101,7 @@ CartTree::CartTree() {
     TreeNode* root_node = new TreeNode();
     root_ = root_node;
     last_time_ = 0;
+    item_count_ = 0;
     return;
 }
 
@@ -124,6 +129,17 @@ void CartTree::__ShowCartRecur(TreeNode* cur) {
 }
 
 void CartTree::AddItem(Item* item) {
+    // 更新加入时间
+    last_time_ += 1;
+    if (item_count_ < MAX_ITEM_NUMBER)
+        item_count_ += 1;
+    else
+        cout << "shopping cart is full!" << endl;
+    __AddItem(item, true);
+    cout << "Add item success" << endl;
+    return;
+}
+TreeNode* CartTree::__AddItem(Item* item, bool update) {
     /*
      * The tree is arranged as described here.
      * FROM BOTTOM TO TOP:
@@ -233,15 +249,14 @@ void CartTree::AddItem(Item* item) {
     // Now, from top to bottom, traverse the tree. Look for subtrees to add the
     // new node. If a certain subtree is to be inserted, item of this node
     // points to the latest item.
-    // 更新加入时间
-    last_time_ += 1;
+
     // find place to insert
     // 第一次添加
     if (root_->son == nullptr) {
         TreeNode* new_node = new TreeNode(item, last_time_);
         new_node->parent = root_;
         root_->son = new_node;
-        return;
+        return new_node;
     }
     // 不是第一次添加
     TreeNode* root = root_;
@@ -289,12 +304,12 @@ void CartTree::AddItem(Item* item) {
             new_node->parent = root;
             root->son = new_node;
             // 添加完成了
-            return;
+            return new_node;
         }
         // 第二种情况：最好的是叶子
-        else if (next_root->son == nullptr) {
+        else if (next_root->son == nullptr && update) {
             // 把叶子移到最前面
-            cur = __get_prev_sibling(next_root);
+            cur = __GetPrevSibling(next_root);
             if (cur != nullptr) {
                 cur->sibling = next_root->sibling;
                 next_root->sibling = root->son;
@@ -306,11 +321,11 @@ void CartTree::AddItem(Item* item) {
             break;
         }
         // 第三种情况：最好的是中间节点
-        else if (__SamePriority(next_root, item)) {
+        else if (__SamePriority(next_root, item) && update) {
             // 如果确实能访问这个节点，要更新
             // 由于新加的节点是最新的，所以把next root移到siblings中的最左边
             // 如果nextroot不是最左孩子，维护sibling指针
-            cur = __get_prev_sibling(next_root);
+            cur = __GetPrevSibling(next_root);
             if (cur != nullptr) {
                 cur->sibling = next_root->sibling;
                 next_root->sibling = root->son;
@@ -336,12 +351,12 @@ void CartTree::AddItem(Item* item) {
         root->number += 1;
         root->add_time = last_time_;
     } else {
-        __AddMidNode(root, item);
+        root = __AddMidNode(root, item);
     }
-    return;
+    return root;
 }
 
-void CartTree::__AddMidNode(TreeNode* root, Item* item) {
+TreeNode* CartTree::__AddMidNode(TreeNode* root, Item* item) {
     assert(root != nullptr && root->parent != nullptr);
     // 先造出来新的中间节点， 需要找到不包含在祖先中的所有相同优先级
     // 逻辑是把高优先级的先插进去，然后循环调用SubTreePriority 就行
@@ -458,7 +473,7 @@ void CartTree::__AddMidNode(TreeNode* root, Item* item) {
     // __UpdateMidNodes(add_time, original_sibling);
     // // 对original_sibling 的祖先中间节点按照->item的加入时间进行sort
     // __SortAncestors(original_sibling);
-    return;
+    return new_node;
 }
 
 int CartTree::__SubTreePriority(TreeNode* root, Item* item, TreeNode* node0) {
@@ -548,13 +563,13 @@ bool CartTree::__NoAncestor(int data, TreeNode* node) {
     return true;
 }
 
-void CartTree::__DelBadNodes(TreeNode* leaf) {
+TreeNode* CartTree::__DelBadNodes(TreeNode* leaf) {
     TreeNode* cur = leaf;
     if (leaf && leaf->parent && !leaf->son)
         // 如果leaf是nullptr, 中间节点, 或根, 不删
         cur = leaf->parent;
     else
-        return;
+        return leaf;
     // 注意到这里如果leaf上方有独支但是leaf有多个item，也不必保留这个支
     while (cur != root_) {
         if (!cur->son->sibling) {
@@ -569,10 +584,10 @@ void CartTree::__DelBadNodes(TreeNode* leaf) {
             break;
         cur = cur->parent;
     }
-    return;
+    return cur->son;
 }
 
-TreeNode* CartTree::__get_prev_sibling(TreeNode* node) {
+TreeNode* CartTree::__GetPrevSibling(TreeNode* node) {
     assert(node->parent != nullptr);
     TreeNode* cur = node->parent->son;
     while (cur != nullptr && cur->sibling != node) {
@@ -580,6 +595,145 @@ TreeNode* CartTree::__get_prev_sibling(TreeNode* node) {
     }
     // if node is the first sibling, should return nullptr.
     return cur;
+}
+
+void CartTree::DelItem(int shop_id, int item_id) {
+    /**
+     * 删除商品
+     * 输入：一个shop_id and item_id
+     * 遍历树，找到这个商品
+     *
+     * (1) 找不到，打印消息
+     *
+     * (2) 找到相应商品大于1件, number-1 即可。不需要更新add_item
+     *          因为京东也是这么干的...
+     *          事实上京东在添加商品时，直接购物车里点数量+1是不会改变排序的，只有在商品详情
+     *          页中添加到购物车才会正确排序...
+     *
+     * (3)   找到相应商品等于1件，删掉这个商品。
+     *
+     *    这个leaf一定有sibling
+     *    a. 除非它直接接在root_下，这时直接删了就好了, 都不用重新排序了
+     *    b. 如果这个leaf有1个sibling，要对这个sibling执行__DelBadNodes
+     *       最后位置存为tmp_node
+     *    c. 如果有2个以上sibling，这一步也不用额外操作
+     *
+     *    先更新改变的叶子的所有祖先的add_time:如果它等于删掉节点的add_time,要换成
+     *    删掉的叶子的后一个sibling的add_time
+     *    如果删的叶子没有sibling
+     *
+     *    最后排序，在每一层中只需要对删掉节点的祖先节点冒泡就行(向右侧sibling比较和移动，
+     *    因为删掉了一个叶子，祖先节点的add_time一定是不变或者变旧的)
+     *
+     *
+     */
+    item_count_ -= 1;
+    TreeNode* leaf_to_del = __FindLeaf(shop_id, item_id, root_);
+    if (!leaf_to_del) {
+        cout << "can not find the item to remove!" << endl;
+        return;
+    }
+    // cout << leaf_to_del->item->item_id << endl;
+    // 最简单：大于1件商品
+    if (leaf_to_del->number > 1) {
+        leaf_to_del->number -= 1;
+        cout << "item " << item_id << " in shop " << shop_id << " deleted, "
+             << leaf_to_del->number << "pcs of the same item remaining" << endl;
+        return;
+    }
+    // 等于1件商品
+    TreeNode *prev_node, *remain_node = nullptr, *tmp_node;
+    // 先看有多少个sibling
+    // 任意一个leaf都一定有sibling，不管是中间的节点还是leaf
+    // 除非这个leaf是root_的孩子
+    if (!leaf_to_del->parent->son->sibling) {
+        // 唯一的孩子
+        assert(leaf_to_del->parent == root_);
+        leaf_to_del->~TreeNode();
+        root_->son = nullptr;
+        cout << "item " << item_id << " in shop " << shop_id
+             << " deleted (last item in cart)" << endl;
+        return;
+    }
+
+    assert(leaf_to_del->parent->son->sibling);
+    // 如果有左边节点，那就不用sort了，but whatever
+    prev_node = __GetPrevSibling(leaf_to_del);
+    if (prev_node) {
+        // remain_node是leaf_to_del之后最高优先级的那个节点
+        remain_node = prev_node->parent->son;
+        prev_node->sibling = leaf_to_del->sibling;
+    } else {
+        remain_node = leaf_to_del->sibling;
+        leaf_to_del->parent->son = leaf_to_del->sibling;
+    }
+    // 如果就2个leaf，删掉1个还剩1个，要调整树
+    if (!leaf_to_del->parent->son->sibling) {
+        remain_node = __DelBadNodes(remain_node);
+        // 这个不太efficient，因为从头开始加了
+        remain_node = __AddItem(remain_node->item, false);
+
+        // 从树中移除剩下的这个item
+        prev_node = __GetPrevSibling(remain_node);
+        if (prev_node) {
+            prev_node->sibling = remain_node->sibling;
+        } else {
+            remain_node->parent->son = remain_node->sibling;
+        }
+        // 再加回去，就按顺序了
+        tmp_node = __AddItem(remain_node->item, false);
+        remain_node->~TreeNode();
+        remain_node = tmp_node;
+    }
+    // 不管怎样，删掉节点
+    int deleted_add_time = leaf_to_del->add_time;
+    leaf_to_del->~TreeNode();
+
+    // 更新remain_node的祖先节点的add_time
+    // 从remain_node开始，对祖先节点逐层排序
+    __UpdateMidNodes(deleted_add_time, remain_node);
+    return;
+}
+
+TreeNode* CartTree::__FindLeaf(int shop_id, int item_id, TreeNode* root) {
+    if (!root) return nullptr;
+    if (!root->son) {
+        if (root->item->shop_id == shop_id && root->item->item_id == item_id)
+            return root;
+        else
+            return __FindLeaf(shop_id, item_id, root->sibling);
+    } else {
+        TreeNode* leaf_in_son = __FindLeaf(shop_id, item_id, root->son);
+        if (leaf_in_son) return leaf_in_son;
+        TreeNode* leaf_in_sibling = __FindLeaf(shop_id, item_id, root->sibling);
+        if (leaf_in_sibling) return leaf_in_sibling;
+    }
+    return nullptr;
+}
+
+void CartTree::__UpdateMidNodes(int deleted_add_time, TreeNode* remain_node) {
+    int remain_add_time = remain_node->add_time;
+    TreeNode *cur = remain_node, *prev_sibling;
+    while (cur && cur->parent) {
+        if (cur->add_time == deleted_add_time) {
+            cur->add_time = remain_add_time;
+        }
+        // 向右边比较，如果addtime比右边小就和右边交换
+        while (cur->sibling && cur->add_time < cur->sibling->add_time) {
+            prev_sibling = __GetPrevSibling(cur);
+            if (prev_sibling) {
+                prev_sibling->sibling = cur->sibling;
+                cur->sibling = cur->sibling->sibling;
+                prev_sibling->sibling = cur;
+            } else {
+                cur->parent->son = cur->sibling;
+                cur->sibling = cur->sibling->sibling;
+                cur->parent->son->sibling = cur;
+            }
+        }
+        cur = cur->parent;
+    }
+    return;
 }
 
 #endif
