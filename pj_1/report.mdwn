@@ -56,7 +56,7 @@
 #### 添加商品
 - 假设不同优先级的优惠数量远少于购物车中商品数量，则
   - 平均时间复杂度: $O(N)$, 其中$N$是购物车中商品件数
-  - 平均空间复杂度: $O(N)$, 其中$N$是购物车中商品件数
+  - 平均空间复杂度: $O(1)$, 其中$N$是购物车中商品件数
 - 按照上文的规则`3`，添加商品的过程有一点点类似于最小堆的sift down过程。
   - 从根节点开始，我们选择当前节点的子节点中具有和新增商品相同的最高优先级的节点访问。不幸的是，这不能只通过中间节点的优先级值来判断，因为新增的商品可能和某个节点下的叶子形成新的子树，而这个子树可能具有原来节点更高的优先级。
     - 以*前一个section中的*那张图为例，如果`N1->data == 1`, `N4->data == 2`, `N5->data == 3`，而`L2`和新增节点有相同的最高优先级的跨店折扣(优先级为`0`)，那么在决定访问`N4`还是`L5`时，我们必须访问所有叶子才能知道`L2`可以和新增节点形成新的子树. 这就是假设打折数量较少时O(N)的时间复杂度的来源。如果购物车内商品的折扣数量和购物车内商品可以相比，简单起见假设每个节点下都有$m$个子节点，那么每访问下一层节点，需要访问的叶子数就减少为上一层的${1\over m}$, $\sum_{i=0}^{\log_m N} {N\over m^i} = {m \over m-1}(N-1)\approx N$, 时间复杂度还是$O(N)$. 
@@ -77,6 +77,8 @@
 - 若删掉的商品只有1个sibling且是leaf，那么要处理这个剩余的sibling，和添加商品的步骤类似，只是多判断一步--不仅祖先节点的添加时间可能变得更新，而且还可能变得更旧，因为删掉的那个节点可能正好贡献了最新的添加时间。这一步的时间复杂度小于$O(N)$。
 
 #### 展示购物车
+- 平均时间复杂度: $O(N)$
+- 平均空间复杂度: $O(1)$
 - 递归从左至右遍历叶子节点并调用该`item`的`show`函数即可。
 
 - 额外功能：展示购物车总金额，在遍历到叶子时返回金额，递归调用就容易求得购物车内商品的总金额。
@@ -86,16 +88,19 @@
 #### 题目给出的测试用例
 (从左向右)
 ##### 1 添加商品
+<img src="official_test1.png" width=200 height=800>
+
 ##### 2 删除商品
-<img src="official_test1.png" width=200 height=800> <img src="official_test2.png" width=200 height=800>
+<img src="official_test2.png" width=200 height=800>
 
-(从左向右)
 ##### 3 跨店打折
+<img src="official_test3.png" width=200 height=700>
+
 ##### 4 跨店满减
+<img src="official_test4.png" width=200 height=700> 
+
 ##### 5 优先级
-
-<img src="official_test3.png" width=200 height=700> <img src="official_test4.png" width=200 height=700> <img src="official_test5.png" width=200 height=700>
-
+<img src="official_test5.png" width=200 height=700>
 
 
 #### 额外的测试用例
@@ -106,7 +111,8 @@
 
 ##### 1 多个不同优先级折扣
 图中可以看出`跨店折扣2-a`的优先级比同商店更大，但是比`跨店折扣1-a`和`跨店折扣1-b`更小。
-<img src="mytest1_a.png" width=200 height=500> <img src="mytest1_b.png" width=200 height=500>
+<img src="mytest1_a.png" width=200 height=500> 
+<img src="mytest1_b.png" width=200 height=500>
 
 ##### 2 形成新子树(1)
 从较小优先级的节点里夺走叶子，形成新的子树
@@ -184,7 +190,7 @@
      *  (shop1)   (shop2)                          add time:  1      3       4
      */
 ```
-可以看到`leaf2`从`mid_node2`进入`mid_node3`的
+可以看到`leaf2`从`mid_node2`进入`mid_node3`
 <img src="mytest11.png" width=200 height=300>
 
 
