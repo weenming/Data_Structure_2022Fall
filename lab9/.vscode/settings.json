@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.f90": "fortran-modern",
+        "iostream": "cpp",
+        "ostream": "cpp"
+    }
+}
