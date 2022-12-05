@@ -1,5 +1,6 @@
 #include <iostream>
 #include <queue>
+#include <stack>
 #include <vector>
 using namespace std;
 
@@ -59,6 +60,30 @@ vector<int> get_vec_tree(TreeNode* root) {
             vec.insert(vec.end(), 1, front->right->val);
         } else {
             vec.insert(vec.end(), 1, 0);
+        }
+    }
+    return vec;
+}
+
+vector<int> get_vec_tree_no_zero(TreeNode* root) {
+    // 中序遍历
+    stack<TreeNode*> s;
+    vector<int> vec;
+    TreeNode *cur = root, *prev_node, *err_node_1, *err_node_2;
+    int prev_val = 0;
+    s.push(root);
+    while (!s.empty()) {
+        while (cur->left) {
+            s.push(cur->left);
+            cur = cur->left;
+        }
+        cur = s.top();
+        // visit
+        if (cur->val) vec.push_back(cur->val);
+        s.pop();
+        if (cur->right) {
+            s.push(cur->right);
+            cur = cur->right;
         }
     }
     return vec;

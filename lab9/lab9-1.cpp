@@ -21,7 +21,7 @@ void swap(TreeNode* root, TreeNode* err1, TreeNode* err2, int err1_val,
 
 void mySolution(TreeNode* root) {
     // 时间复杂是O(N)
-    // 空间复杂度是O(N)
+    // 空间复杂度是O(log2 N)
     stack<TreeNode*> s;
     TreeNode *cur = root, *prev_node, *err_node_1, *err_node_2;
     int prev_val = 0;
@@ -78,7 +78,13 @@ void mySolution(TreeNode* root) {
     err_node_2 = prev_node;
     // cout << endl;
     cout << "swap " << err_node_1->val << ',' << err_node_2->val << endl;
-    swap(root, err_node_1, err_node_2, err_node_1->val, err_node_2->val);
+
+    // I am idiot...
+    // swap(root, err_node_1, err_node_2, err_node_1->val, err_node_2->val);
+
+    int tmp = err_node_1->val;
+    err_node_1->val = err_node_2->val;
+    err_node_2->val = tmp;
     return;
 }
 
@@ -86,7 +92,7 @@ void test() {
     cout << "before:" << endl;
 
     // test case 1
-    // vector<int> a = {1, 3, NULL, NULL, 2};
+    vector<int> a = {1, 3, NULL, NULL, 2};
 
     // test case 2: swap 2 and 3
     // vector<int> a = {4, 3, 5, 1, 2};
@@ -95,7 +101,7 @@ void test() {
     // vector<int> a = {2, 4, 6, 1, NULL, 5, 7};
 
     // test case 4: not neighboring
-    vector<int> a = {4, 2, 6, 1, 7, 5, 3};
+    // vector<int> a = {4, 2, 6, 1, 7, 5, 3};
 
     for (int i = 0; i < a.size(); i++) cout << a[i] << ' ';
     cout << endl;

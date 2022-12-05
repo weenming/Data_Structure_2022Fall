@@ -1,0 +1,120 @@
+.
+├── exploit
+│   ├── alarm
+│   │   ├── erosion
+│   │   │   ├── aesthetic
+│   │   │   │   └── species
+│   │   │   ├── principal
+│   │   │   │   ├── assess
+│   │   │   │   ├── contend
+│   │   │   │   └── prolong
+│   │   │   └── relay
+│   │   │       ├── advocate
+│   │   │       ├── recruit
+│   │   │       └── suppress
+│   │   └── renaissance
+│   │       ├── adore
+│   │       │   ├── gaze
+│   │       │   ├── linger
+│   │       │   └── throne
+│   │       └── eccentric
+│   │           ├── ingenious
+│   │           ├── notable
+│   │           └── quota
+│   ├── explore
+│   └── hawk
+│       ├── betray
+│       │   ├── abundant
+│       │   │   └── attribute
+│       │   └── resistant
+│       │       ├── cocaine
+│       │       ├── illuminate
+│       │       └── trial
+│       ├── legislation
+│       │   └── compile
+│       │       ├── element
+│       │       └── velvet
+│       └── rational
+│           ├── compulsory
+│           │   ├── destruction
+│           │   ├── dolphin
+│           │   ├── linen
+│           │   └── muscular
+│           ├── diplomat
+│           ├── evaluate
+│           │   ├── mistress
+│           │   └── reluctant
+│           └── module
+│               ├── corpse
+│               └── fatal
+├── gloom
+│   ├── assemble
+│   │   ├── compose
+│   │   │   ├── assault
+│   │   │   │   ├── array
+│   │   │   │   ├── hoist
+│   │   │   │   └── undergo
+│   │   │   ├── engagement
+│   │   │   │   ├── accuse
+│   │   │   │   └── chase
+│   │   │   ├── outrage
+│   │   │   │   ├── affirm
+│   │   │   │   └── retention
+│   │   │   └── skip
+│   │   │       └── drawback
+│   │   └── revelation
+│   │       ├── decimal
+│   │       │   ├── complex
+│   │       │   ├── purity
+│   │       │   └── strand
+│   │       ├── hesitate
+│   │       │   └── extent
+│   │       └── prestige
+│   │           ├── cholesterol
+│   │           ├── parameter
+│   │           └── posture
+│   └── prevalent
+│       ├── chip
+│       │   ├── caution
+│       │   │   ├── cereal
+│       │   │   ├── compete
+│       │   │   └── legend
+│       │   ├── ensue
+│       │   │   ├── complicated
+│       │   │   ├── glide
+│       │   │   ├── obedient
+│       │   │   └── repel
+│       │   ├── respective
+│       │   │   ├── abolish
+│       │   │   └── anticipate
+│       │   └── slump
+│       │       ├── cradle
+│       │       └── manifest
+│       └── deduct
+│           ├── impair
+│           │   ├── bypass
+│           │   ├── nil
+│           │   └── underestimate
+│           ├── overthrow
+│           │   └── shabby
+│           └── reign
+│               ├── invalid
+│               └── municipal
+├── screw
+│   └── unfold
+│       ├── pastime
+│       │   ├── elaborate
+│       │   └── stab
+│       │       └── obstacle
+│       └── settle
+│           ├── instinct
+│           │   ├── ceramic
+│           │   ├── consequently
+│           │   └── odor
+│           └── sufficient
+│               ├── haul
+│               ├── ideal
+│               └── van
+└── user_tree.txt
+
+116 directories, 1 file

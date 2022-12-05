@@ -161,6 +161,29 @@ TreeNode* mySolution(TreeNode* root) {
     // add_to_tree_recur(right, root);
 }
 
+TreeNode* CreateTreeRecur(vector<int> vec, int start, int end) {
+    if (start == end) {
+        return nullptr;
+    } else if (start == end - 1) {
+        TreeNode* root = new TreeNode(vec[start]);
+        return root;
+    }
+    int mid = (start + end) / 2;
+    TreeNode* root = new TreeNode(vec[mid]);
+    TreeNode* lnode = CreateTreeRecur(vec, start, mid);
+    TreeNode* rnode = CreateTreeRecur(vec, mid, end);
+    root->left = lnode;
+    root->right = rnode;
+    return root;
+}
+
+TreeNode* myNewSol(TreeNode* root) {
+    vector<int> vec = get_vec_tree_no_zero(root);
+    for (int i = 0; i < vec.size(); i++) cout << vec[i] << ' ';
+    cout << endl;
+    return CreateTreeRecur(vec, 0, vec.size());
+}
+
 void test() {
     vector<int> a = {1,    NULL, 2,    NULL, NULL, NULL, 3, NULL,
                      NULL, NULL, NULL, NULL, NULL, NULL, 4};
@@ -176,10 +199,13 @@ void test() {
     // vector<int> a = {7, 5, 8, 2, 6, 0, 0, 1, 3, 0, 9, 0, 0, 0, 0, 0, 0, 0,
     // 4};
 
+    // 有子树的左旋转
+    // vector<int> a = {5, 1, 6, 0, 2, 0, 7, 0, 0, 0, 3};
+
     TreeNode* root = createTree(a, 0);
     cout << "before" << endl;
     printTree(get_vec_tree(root));
-    root = mySolution(root);
+    root = myNewSol(root);
     cout << "after" << endl;
     printTree(get_vec_tree(root));
 }
