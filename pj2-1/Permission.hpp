@@ -43,7 +43,6 @@ void Permission::AddPms(int usr_id, int file_id, int level) {
 }
 
 int Permission::GetPms(int usr_id, int file_id) {
-    // 嘻嘻嘻嘻
     if (!_HasUsrKey(usr_id)) {  // 查找1次
         // no usr info in permission list
         return 0;

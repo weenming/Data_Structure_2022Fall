@@ -20,7 +20,7 @@ class Tree {
     int AddItem(int parent_id) {
         // Ah,I think _parent.size() is an unsigned number... That should be why
         // -1 > 1...
-
+        // 根节点的parent是-1，其实这个类是个森林？
         assert(parent_id < 0 || parent_id < _parent.size());
         _parent.push_back(parent_id);
         // 返回新加进去的元素的id
