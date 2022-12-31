@@ -289,6 +289,6 @@ void myTest() {
 }
 
 int main() {
-    myTest();
+    AllTest();
     return 0;
 }

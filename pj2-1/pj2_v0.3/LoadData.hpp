@@ -68,9 +68,10 @@ void LoadCsv(Permission* pms, UserTree* usr_tree, FileTree* file_tree,
     char separator = ',';
     string row, item;
     ifstream in(filename);
-    // 要去掉标题行？但文件里也没有啊
-    // 估计是文件开头...
-    // 坑爹的是这是奇怪字符，不显示的
+    // 要去掉标题行，但是文件里并没有标题行，还是会导致第一行的开头有些奇怪的字符。
+    // 估计是文件开头的什么信息...
+    // 坑爹的是这些奇怪字符在debugger里面不显示...
+    // 所以我的解决方法就是手动加一行表头再读掉它
     getline(in, row);
     while (getline(in, row)) {
         vector<string> R;
@@ -78,8 +79,8 @@ void LoadCsv(Permission* pms, UserTree* usr_tree, FileTree* file_tree,
         while (getline(ss, item, separator)) R.push_back(item);
         // Add to Permission type
         // one line in the csv: usr_name, file_name, permission
-        // R[3][0]: first char in the string
-        // FILE and USER corresponds to a special line
+        // R[3][0]: first char in the string, should be char for the number of
+        // permission level. FILE and USER corresponds to a special line
         if (R[0] == "USER") {
             continue;
         }
