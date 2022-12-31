@@ -29,9 +29,9 @@ void LoadTree(string cur_path, UserTree* tree, int parent_id) {
             strcmp(FileInfo.name,
                    "..")) {  // exclude first two dir: cur rand parent
             string usr_name = FileInfo.name;
-            parent_id = tree->AddItem(parent_id,
-                                      usr_name);  // must treat as a string
-            LoadTree(cur_path + "/" + FileInfo.name, tree, parent_id);
+            int new_id = tree->AddItem(parent_id,
+                                       usr_name);  // must treat as a string
+            LoadTree(cur_path + "/" + FileInfo.name, tree, new_id);
         }
         next = _findnext(Handle, &FileInfo);
     }
@@ -53,9 +53,9 @@ void LoadTree(string cur_path, FileTree* tree, int parent_id) {
         if (strcmp(FileInfo.name, ".") &&
             strcmp(FileInfo.name,
                    "..")) {  // exclude first two dir: cur rand parent
-            parent_id =
+            int new_id =
                 tree->AddItem(parent_id, cur_path + "/" + FileInfo.name);
-            LoadTree(cur_path + "/" + FileInfo.name, tree, parent_id);
+            LoadTree(cur_path + "/" + FileInfo.name, tree, new_id);
         }
         next = _findnext(Handle, &FileInfo);
     }

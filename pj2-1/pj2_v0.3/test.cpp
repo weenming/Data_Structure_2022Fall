@@ -132,16 +132,16 @@ void myTest() {
      * 几种情况：
      * 1. File 没有父节点
      *  1. Usr没有父节点
-     *  2. Usr有父节点但是permission并不更低
-     *  3. Usr有父节点且Permission更低
-     * 2. File有父节点且Permission不更低
+     *  2. Usr有父节点但任意file的Permission并不更低
+     *  3. Usr有父节点且存在一个file的祖先Permission更低
+     * 2. File有父节点且所有usr的祖先Permission不更低
      *  1. Usr没有父节点
-     *  2. Usr有父节点但Permission并不更低
-     *  3. Usr有父节点且Permission更低
-     * 3. File有父节点且Permission更低
+     *  2. Usr有父节点但任意file的Permission并不更低
+     *  3. Usr有父节点且存在一个file的祖先Permission更低
+     * 3. File有父节点且存在一个usr的祖先Permission更低
      *  1. Usr没有父节点
-     *  2. Usr有父节点但Permission并不更低
-     *  3. Usr有父节点且Permission更低
+     *  2. Usr有父节点但任意file的Permission并不更低
+     *  3. Usr有父节点且存在一个file的祖先Permission更低
      * 4. File不存在或者Usr不存在
      */
 
@@ -161,14 +161,134 @@ void myTest() {
     f->AddItem(-1);
     u->AddItem(-1);
     u->AddItem(0);
+    p->AddPms(0, 0, 2);
+    p->AddPms(1, 0, 2);
+    cout << u->GetPermission(p, 1, f, 0) << " should be 2" << endl;
+
+    // 1.3
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    u->AddItem(-1);
+    u->AddItem(0);
     p->AddPms(0, 0, 1);
     p->AddPms(1, 0, 2);
     cout << u->GetPermission(p, 1, f, 0) << " should be 1" << endl;
 
-    // 1.3
+    // 2.1
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    f->AddItem(0);
+    u->AddItem(-1);
+    p->AddPms(0, 1, 2);
+    p->AddPms(0, 0, 2);
+
+    cout << u->GetPermission(p, 0, f, 1) << " should be 2" << endl;
+
+    // 2.2
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    f->AddItem(0);
+    u->AddItem(-1);
+    u->AddItem(0);
+    p->AddPms(0, 1, 2);
+    p->AddPms(0, 0, 2);
+    p->AddPms(1, 1, 2);
+    p->AddPms(1, 0, 2);
+    cout << u->GetPermission(p, 1, f, 1) << " should be 2" << endl;
+
+    // 2.3
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    f->AddItem(0);
+    u->AddItem(-1);
+    u->AddItem(0);
+    p->AddPms(0, 1, 2);
+    p->AddPms(0, 0, 1);
+    p->AddPms(1, 1, 2);
+    p->AddPms(1, 0, 2);
+    cout << u->GetPermission(p, 0, f, 1) << " should be 1" << endl;
+
+    // 3.1
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    f->AddItem(0);
+    u->AddItem(-1);
+    u->AddItem(0);
+    p->AddPms(0, 1, 2);
+    p->AddPms(0, 0, 2);
+    p->AddPms(1, 1, 2);
+    p->AddPms(1, 0, 1);
+    cout << u->GetPermission(p, 1, f, 1) << " should be 1" << endl;
+
+    // 3.2
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    f->AddItem(0);
+    u->AddItem(-1);
+    u->AddItem(0);
+    p->AddPms(0, 1, 2);
+    p->AddPms(0, 0, 2);
+    p->AddPms(1, 1, 2);
+    p->AddPms(1, 0, 1);
+    cout << u->GetPermission(p, 1, f, 1) << " should be 1" << endl;
+
+    // 3.3
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    f->AddItem(0);
+    u->AddItem(-1);
+    p->AddPms(0, 1, 2);
+    p->AddPms(0, 0, 1);
+    cout << u->GetPermission(p, 0, f, 1) << " should be 1" << endl;
+
+    // 4
+    f = new FileTree();
+    u = new UserTree();
+    p = new Permission();
+    f->AddItem(-1);
+    f->AddItem(0);
+    f->AddItem(1);
+    f->AddItem(2);
+    f->AddItem(3);
+
+    u->AddItem(-1);
+    u->AddItem(0);
+    u->AddItem(1);
+    u->AddItem(2);
+    u->AddItem(3);
+
+    p->AddPms(0, 1, 2);
+    p->AddPms(0, 0, 1);
+    p->AddPms(0, 3, 1);
+    p->AddPms(1, 0, 2);
+    p->AddPms(0, 0, 1);
+    p->AddPms(3, 0, 1);
+
+    cout << u->GetPermission(p, 0, f, 3)
+         << " should be 0 because ancestor of 3 does not have record" << endl;
+    cout << u->GetPermission(p, 0, f, 4)
+         << " should be 0 because 4 does not have record" << endl;
+    cout << u->GetPermission(p, 3, f, 0)
+         << " should be 0 because ancestor of 3 does not have record" << endl;
+    cout << u->GetPermission(p, 4, f, 0)
+         << " should be 0 because 4 does not have record" << endl;
 }
 
 int main() {
-    AllTest();
+    myTest();
     return 0;
 }
