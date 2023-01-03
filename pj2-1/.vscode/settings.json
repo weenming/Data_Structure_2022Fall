@@ -1,6 +1,0 @@
-{
-    "files.associations": {
-        "*.f90": "fortran-modern",
-        "string": "cpp"
-    }
-}
