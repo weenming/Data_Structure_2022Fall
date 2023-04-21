@@ -3,4 +3,4 @@ Assignments: Data Structrue@Fudan Univ., 2022 fall.
 
 Do your homeworks yourself!
 
-If you find this repo inappropriate please contact me.
+Please contact me if you find this repo inappropriate.
